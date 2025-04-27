@@ -452,7 +452,7 @@ const Home = () => {
                 data: { user_id: user.id, image: canvas.toDataURL("image/png"), dict_of_vars: dictOfVars }
             });
 
-            const resp = await response.data;
+            const resp = response.data;
 
             if (!resp.data || resp.data.length === 0) {
                 setErrorMessage("Input contains no Mathematical Problem");
