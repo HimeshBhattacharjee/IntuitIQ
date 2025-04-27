@@ -54,7 +54,7 @@ const Home = () => {
                 width: window.innerWidth,
                 height: window.innerHeight,
             });
-            
+
             const canvas = canvasRef.current;
             if (canvas) {
                 const ctx = canvas.getContext("2d");
@@ -83,7 +83,7 @@ const Home = () => {
         const canvas = canvasRef.current;
         const context = canvas?.getContext("2d");
         if (!context || !canvas) return;
-        
+
         const roughCanvas = rough.canvas(canvas);
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.save();
@@ -98,8 +98,8 @@ const Home = () => {
     useEffect(() => {
         if (result) {
             renderLatexToCanvas(
-                result.expression || "", 
-                result.procedure || "", 
+                result.expression || "",
+                result.procedure || "",
                 result.solution || ""
             );
         }
@@ -136,19 +136,19 @@ const Home = () => {
                 ctx.lineWidth = brushSize;
             }
         }
-        
+
         // Load MathJax only if it's not already loaded
         if (!window.MathJax) {
             const script = document.createElement("script");
             script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML";
             script.async = true;
             document.head.appendChild(script);
-            script.onload = () => { 
-                window.MathJax.Hub.Config({ 
+            script.onload = () => {
+                window.MathJax.Hub.Config({
                     tex2jax: { inlineMath: [["$", "$"], ["\\(", "\\)"]] },
                     showProcessingMessages: false,
                     messageStyle: "none"
-                }); 
+                });
             };
             return () => { document.head.removeChild(script); };
         }
@@ -164,11 +164,11 @@ const Home = () => {
     }, [undo, redo]);
 
     useEffect(() => {
-        const panFunction = (event: WheelEvent) => { 
-            setPanOffset((prevState) => ({ 
-                x: prevState.x - event.deltaX, 
-                y: prevState.y - event.deltaY, 
-            })); 
+        const panFunction = (event: WheelEvent) => {
+            setPanOffset((prevState) => ({
+                x: prevState.x - event.deltaX,
+                y: prevState.y - event.deltaY,
+            }));
         };
         document.addEventListener("wheel", panFunction);
         return () => { document.removeEventListener("wheel", panFunction); };
@@ -202,13 +202,13 @@ const Home = () => {
         try {
             const procedureString = typeof procedure === 'string' ? procedure : '';
             const answerLines = procedureString.split('\n').filter(line => line.trim() !== '');
-            
+
             const latexLines: string[] = [];
-            
+
             if (expression) {
                 latexLines.push(`\\text{Problem: } ${expression}`);
             }
-            
+
             if (answerLines.length > 0 || solution) {
                 latexLines.push(`\\text{Solution: }`);
                 answerLines.forEach((line) => {
@@ -216,11 +216,11 @@ const Home = () => {
                     if (cleanedLine) latexLines.push(` ${cleanedLine}`);
                 });
             }
-            
+
             if (solution) {
                 latexLines.push(`\\text{Final Answer: } ${solution}`);
             }
-            
+
             setLatexExpression(latexLines);
             const canvas = canvasRef.current;
             if (canvas) {
@@ -448,24 +448,25 @@ const Home = () => {
             const response = await axios({
                 method: "post",
                 url: `${import.meta.env.VITE_API_URL}/image_calculate`,
+                headers: { 'Content-Type': 'application/json' },
                 data: { user_id: user.id, image: canvas.toDataURL("image/png"), dict_of_vars: dictOfVars }
             });
-            
+
             const resp = await response.data;
-            
+
             if (!resp.data || resp.data.length === 0) {
                 setErrorMessage("Input contains no Mathematical Problem");
                 setTimeout(() => setErrorMessage(null), 3000);
                 setIsFetching(false);
                 return;
             }
-            
+
             const validResults: GeneratedResult[] = [];
             resp.data.forEach((data: Response) => {
                 if (data.assign === true) {
                     setDictOfVars(prev => ({ ...prev, [data.expr]: data.steps }));
                 }
-                
+
                 if (data.expr && (data.steps || data.result)) {
                     validResults.push({
                         expression: data.expr,
@@ -474,18 +475,18 @@ const Home = () => {
                     });
                 }
             });
-            
+
             if (validResults.length === 0) {
                 setErrorMessage("No valid mathematical problems found");
                 setTimeout(() => setErrorMessage(null), 3000);
                 setIsFetching(false);
                 return;
             }
-            
+
             const ctx = canvas.getContext("2d");
             const imageData = ctx!.getImageData(0, 0, canvas.width, canvas.height);
             let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
-            
+
             for (let y = 0; y < canvas.height; y++) {
                 for (let x = 0; x < canvas.width; x++) {
                     const i = (y * canvas.width + x) * 4;
@@ -497,11 +498,11 @@ const Home = () => {
                     }
                 }
             }
-            
+
             const centerX = (minX + maxX) / 2;
             const centerY = (minY + maxY) / 2;
             setLatexPosition({ x: centerX, y: centerY });
-            
+
             validResults.forEach((result, index) => {
                 setTimeout(() => {
                     setResult(result);
@@ -518,27 +519,27 @@ const Home = () => {
     };
 
     return (
-        <div 
+        <div
             ref={containerRef}
-            style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                height: '100vh', 
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
                 width: '100vw',
                 overflow: 'hidden',
                 position: 'relative'
             }}
         >
-            <Tools 
-                tool={tool} 
-                setTool={handleSetTool} 
-                color={color} 
-                setColor={setColor} 
-                setIsEraser={setIsEraser} 
-                eraserSize={eraserSize} 
-                setEraserSize={setEraserSize} 
-                brushSize={brushSize} 
-                setBrushSize={setBrushSize} 
+            <Tools
+                tool={tool}
+                setTool={handleSetTool}
+                color={color}
+                setColor={setColor}
+                setIsEraser={setIsEraser}
+                eraserSize={eraserSize}
+                setEraserSize={setEraserSize}
+                brushSize={brushSize}
+                setBrushSize={setBrushSize}
             />
             <Sidebar />
             {action === "writing" && selectedElement?.type === "text" ? (
@@ -564,15 +565,15 @@ const Home = () => {
                     }}
                 />
             ) : null}
-            <canvas 
+            <canvas
                 id="canvas"
                 ref={canvasRef}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
-                style={{ 
-                    position: "absolute", 
-                    zIndex: 1, 
+                style={{
+                    position: "absolute",
+                    zIndex: 1,
                     background: "#000",
                     width: '100%',
                     height: '100%',
@@ -585,11 +586,11 @@ const Home = () => {
                     onStop={(_, data) => { setLatexPosition({ x: data.x, y: data.y }) }}
                     bounds="parent"
                 >
-                    <div 
-                        className="latex-container" 
-                        style={{ 
+                    <div
+                        className="latex-container"
+                        style={{
                             position: "absolute",
-                            top: panOffset.y, 
+                            top: panOffset.y,
                             left: panOffset.x,
                             transform: `translate(${panOffset.x}px, ${panOffset.y}px)`,
                             maxWidth: '90%',
@@ -603,10 +604,10 @@ const Home = () => {
                         }}
                     >
                         {latexExpression.map((latex, index) => (
-                            <div 
-                                key={index} 
-                                style={{ 
-                                    animationDelay: `${index * 0.3}s`, 
+                            <div
+                                key={index}
+                                style={{
+                                    animationDelay: `${index * 0.3}s`,
                                     display: index <= visibleLines ? 'block' : 'none',
                                     marginBottom: '5px',
                                     wordBreak: 'break-word'
@@ -644,12 +645,12 @@ const Home = () => {
                     {errorMessage}
                 </div>
             )}
-            <Footer 
-                setReset={setReset} 
-                undo={undo} 
-                redo={redo} 
-                runRoute={runRoute} 
-                isFetching={isFetching} 
+            <Footer
+                setReset={setReset}
+                undo={undo}
+                redo={redo}
+                runRoute={runRoute}
+                isFetching={isFetching}
             />
         </div>
     );
