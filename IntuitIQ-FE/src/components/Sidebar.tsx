@@ -26,9 +26,11 @@ export default function Sidebar() {
         if (!user) return;
         setLoading(true);
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/text_calculate`, {
-                user_id: user.id,
-                question: textBoxValue
+            const response = await axios({
+                method: "post",
+                url: `${import.meta.env.VITE_API_URL}/text_calculate`,
+                headers: { 'Content-Type': 'application/json' },
+                data: { user_id: user.id, question: textBoxValue }
             });
             const result = response.data.data;
             if (editor) editor.commands.setContent(result);

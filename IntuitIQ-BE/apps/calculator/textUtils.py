@@ -1,11 +1,11 @@
-from mistralai import Mistral
+from mistralai.client import MistralClient
 import markdown
 from constants import MISTRAL_API_KEY
 
 if not MISTRAL_API_KEY:
     raise ValueError("MISTRAL_API_KEY not found in environment variables.")
 
-client = Mistral(api_key=MISTRAL_API_KEY)
+client = MistralClient(api_key=MISTRAL_API_KEY)
 model = "mistral-large-latest"
 
 def analyze_text(question: str):
