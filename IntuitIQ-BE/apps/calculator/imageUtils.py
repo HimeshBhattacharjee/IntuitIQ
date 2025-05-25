@@ -3,6 +3,7 @@ import ast
 import json
 from PIL import Image
 from constants import GEMINI_API_KEY
+from fallback_response import extract_dict_from_response
 
 genai.configure(api_key=GEMINI_API_KEY)
 
@@ -100,21 +101,15 @@ def analyze_image(img: Image, dict_of_vars: dict):
         f"DO NOT USE BACKTICKS OR MARKDOWN FORMATTING. "
         f"PROPERLY QUOTE THE KEYS AND VALUES IN THE DICTIONARY FOR EASIER PARSING WITH Python's ast.literal_eval."
     )
-    
     response = model.generate_content([prompt, img])
-    print("Raw response:", response.text)
-    
+    print(f"Raw Image Response: {response.text}")
     answers = []
     try:
         answers = ast.literal_eval(response.text)
     except Exception as e:
         print(f"Error in parsing response from Gemini API: {e}")
-        answers = [{
-            'steps': [response.text],
-            'assign': False
-        }]
-    
-    print('Processed answer:', answers)
+        answers = extract_dict_from_response(response.text)
+    print(f"Processed Image Answer: {answers}")
     for answer in answers:
         if 'assign' in answer:
             answer['assign'] = True

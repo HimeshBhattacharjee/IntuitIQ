@@ -15,10 +15,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://intuitiq.netlify.app",  # Your Netlify URL
-        "http://localhost:3000",                  # For local development
-    ],
+    allow_origins=["https://intuitiq.netlify.app", "*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

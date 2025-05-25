@@ -39,6 +39,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-autoplay": "^8.5.2",
+    "framer-motion": "^12.9.2",
     "lucide-react": "^0.456.0",
     "mathjax": "^3.2.2",
     "perfect-freehand": "^1.2.2",
