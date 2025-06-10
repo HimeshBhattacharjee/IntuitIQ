@@ -343,7 +343,7 @@ export const TeamMemberCard = ({ member }: { member: TeamMember }) => {
                                 rel="noopener noreferrer"
                                 whileHover={{ y: -5, scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="bg-gray-800 p-3 rounded-full hover:bg-gradient-to-r from-purple-500 to-indigo-500"
+                                className="bg-gray-800 p-3 rounded-full hover:bg-gradient-to-b from-white to-indigo-500"
                             >
                                 <img src={social.icon} alt={social.name} width={20} />
                             </motion.a>
